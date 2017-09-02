@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import io.realm.Realm
+import io.realm.RealmConfiguration
 import org.pretorh.example.kotlintest.R
 import org.pretorh.example.kotlintest.service.JsonPlaceholderService
 import javax.inject.Named
@@ -20,7 +21,14 @@ class DefaultModule(private val context: Context) {
     fun provideBaseUrl() : String = context.getString(R.string.baseUrl)
 
     @Provides
-    fun provideRealm() : Realm {
-        return Realm.getDefaultInstance()
+    fun provideRealm(realmConfiguration: RealmConfiguration) : Realm {
+        return Realm.getInstance(realmConfiguration)
+    }
+
+    @Provides
+    fun provideRealmConfiguration() : RealmConfiguration {
+        return RealmConfiguration.Builder()
+                .deleteRealmIfMigrationNeeded()
+                .build()
     }
 }
