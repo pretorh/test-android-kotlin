@@ -3,7 +3,6 @@ package org.pretorh.example.kotlintest
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.LayoutInflater
 import kotlinx.android.synthetic.main.activity_main.*
 import org.pretorh.example.kotlintest.service.Comment
@@ -20,22 +19,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        txtInfo.setOnClickListener { loadPosts() }
+        loadPosts()
+    }
+
+    private fun loadPosts() {
         txtInfo.text = getString(R.string.loading)
+        service.getPosts(object : Parser<List<Post>>() {
+            override fun defaultValue(): List<Post> {
+                return ArrayList()
+            }
 
-        service.getPosts(object: Parser<List<Post>>() {
-                    override fun defaultValue(): List<Post> {
-                        return ArrayList()
-                    }
+            override fun onFailure(t: Throwable) {
+                txtInfo.text = "request failed ${t.message}"
+            }
 
-                    override fun onFailure(t: Throwable) {
-                        txtInfo.text = "request failed ${t.message}"
-                    }
-
-                    override fun onResponse(result: List<Post>) {
-                        txtInfo.text = getString(R.string.loaded_successfully)
-                        bindPostsToList(result)
-                    }
-                })
+            override fun onResponse(result: List<Post>) {
+                txtInfo.text = getString(R.string.loaded_successfully)
+                bindPostsToList(result)
+            }
+        })
     }
 
     private fun bindPostsToList(result: List<Post>) {
@@ -52,7 +55,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResponse(result: List<Comment>) {
                 txtInfo.text = getString(R.string.loaded_successfully)
-                Log.d("MainActivity", "loaded ${result.size} comments for post $id")
+                val layoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                post_list.adapter = CommentAdapter(result, layoutInflater)
             }
 
             override fun defaultValue(): List<Comment> {
