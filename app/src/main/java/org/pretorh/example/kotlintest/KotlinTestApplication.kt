@@ -6,7 +6,7 @@ import org.pretorh.example.kotlintest.di.DefaultModule
 import org.pretorh.example.kotlintest.di.Injector
 
 class KotlinTestApplication : Application() {
-    private var injector: Injector? = null
+    lateinit var injector: Injector
 
     override fun onCreate() {
         super.onCreate()

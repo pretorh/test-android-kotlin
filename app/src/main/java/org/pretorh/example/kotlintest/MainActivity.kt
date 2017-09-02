@@ -8,15 +8,16 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.pretorh.example.kotlintest.service.JsonPlaceholderService
 import org.pretorh.example.kotlintest.service.Parser
 import org.pretorh.example.kotlintest.service.Post
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-    private val service: JsonPlaceholderService by lazy {
-        JsonPlaceholderService(getString(R.string.baseUrl))
-    }
+    @Inject
+    lateinit var service: JsonPlaceholderService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        (application as KotlinTestApplication).injector.inject(this)
 
         txtInfo.setOnClickListener { loadPosts() }
         loadPosts()

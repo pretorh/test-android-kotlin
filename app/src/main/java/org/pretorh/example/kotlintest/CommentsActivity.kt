@@ -9,15 +9,17 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.pretorh.example.kotlintest.service.Comment
 import org.pretorh.example.kotlintest.service.JsonPlaceholderService
 import org.pretorh.example.kotlintest.service.Parser
+import javax.inject.Inject
 
 class CommentsActivity : AppCompatActivity() {
-    private val service: JsonPlaceholderService by lazy {
-        JsonPlaceholderService(getString(R.string.baseUrl))
-    }
+    @Inject
+    lateinit var service: JsonPlaceholderService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comments)
+        (application as KotlinTestApplication).injector.inject(this)
+
         val postId = intent.getIntExtra(EXTRA_POST_ID, 0)
         loadComments(postId)
     }
