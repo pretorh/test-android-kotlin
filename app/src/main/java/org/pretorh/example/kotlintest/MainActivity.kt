@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import kotlinx.android.synthetic.main.activity_main.*
-import org.pretorh.example.kotlintest.service.Comment
 import org.pretorh.example.kotlintest.service.JsonPlaceholderService
 import org.pretorh.example.kotlintest.service.Parser
 import org.pretorh.example.kotlintest.service.Post
@@ -47,21 +46,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadComments(id: Int) {
-        txtInfo.text = getString(R.string.loading)
-        service.getComments(id, object: Parser<List<Comment>>() {
-            override fun onFailure(t: Throwable) {
-                txtInfo.text = "request failed ${t.message}"
-            }
-
-            override fun onResponse(result: List<Comment>) {
-                txtInfo.text = getString(R.string.loaded_successfully)
-                val layoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                post_list.adapter = CommentAdapter(result, layoutInflater)
-            }
-
-            override fun defaultValue(): List<Comment> {
-                return ArrayList()
-            }
-        })
+        startActivity(CommentsActivity.newIntent(this, id))
     }
 }
