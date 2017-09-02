@@ -1,3 +1,9 @@
 package org.pretorh.example.kotlintest.service
 
-data class Post(val id: Int, val title: String)
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+
+open class Post(
+        @PrimaryKey var id: Int = 0,
+        var title: String = ""
+) : RealmObject()

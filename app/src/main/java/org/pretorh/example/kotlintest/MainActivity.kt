@@ -13,6 +13,8 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var service: JsonPlaceholderService
+    @Inject
+    lateinit var repository: PostRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         (application as KotlinTestApplication).injector.inject(this)
 
         txtInfo.setOnClickListener { loadPosts() }
+        bindPostsToList(repository.load())
         loadPosts()
     }
 
@@ -35,6 +38,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onResponse(result: List<Post>) {
+                repository.persist(result)
                 txtInfo.text = getString(R.string.loaded_successfully)
                 bindPostsToList(result)
             }

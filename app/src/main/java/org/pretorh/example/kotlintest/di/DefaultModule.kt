@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.Provides
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import org.pretorh.example.kotlintest.PostRepository
 import org.pretorh.example.kotlintest.R
 import org.pretorh.example.kotlintest.service.JsonPlaceholderService
 import javax.inject.Named
@@ -30,5 +31,10 @@ class DefaultModule(private val context: Context) {
         return RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build()
+    }
+
+    @Provides
+    fun providePostRepository(realm: Realm) : PostRepository {
+        return PostRepository(realm)
     }
 }
