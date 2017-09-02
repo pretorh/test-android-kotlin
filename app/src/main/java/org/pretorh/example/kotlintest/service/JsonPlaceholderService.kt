@@ -5,7 +5,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.ArrayList
 
 class JsonPlaceholderService(baseUrl: String) {
     private val retrofit = Retrofit.Builder()
@@ -13,21 +12,25 @@ class JsonPlaceholderService(baseUrl: String) {
             .baseUrl(baseUrl)
             .build()
 
-    fun getPosts(responseHandler: ResponseHandler) {
-        val client = retrofit.create(JsonPlaceholder::class.java)
-        return client.posts().enqueue(object : Callback<List<Post>> {
-            override fun onResponse(call: Call<List<Post>>?, response: Response<List<Post>>?) {
-                responseHandler.onResponse(response?.body() ?: ArrayList())
-            }
-
-            override fun onFailure(call: Call<List<Post>>?, t: Throwable?) {
-                responseHandler.onFailure(t ?: RuntimeException("Request failed"))
-            }
-        })
+    fun getPosts(parser: Parser<List<Post>>) {
+        retrofit.create(JsonPlaceholder::class.java)
+                .posts()
+                .enqueue(parser)
     }
 }
 
-interface ResponseHandler {
-    fun onFailure(t: Throwable)
-    fun onResponse(posts: List<Post>)
+abstract class Parser<T> : Callback<T> {
+    abstract fun onFailure(t: Throwable)
+
+    abstract fun onResponse(result: T)
+
+    abstract fun defaultValue(): T
+
+    override fun onFailure(call: Call<T>?, t: Throwable?) {
+        onFailure(t ?: RuntimeException("Request failed"))
+    }
+
+    override fun onResponse(call: Call<T>?, response: Response<T>?) {
+        onResponse(response?.body() ?: defaultValue())
+    }
 }
