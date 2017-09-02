@@ -17,6 +17,12 @@ class JsonPlaceholderService(baseUrl: String) {
                 .posts()
                 .enqueue(parser)
     }
+
+    fun getComments(postId: Int, parser: Parser<List<Comment>>) {
+        retrofit.create(JsonPlaceholder::class.java)
+                .comments(postId)
+                .enqueue(parser)
+    }
 }
 
 abstract class Parser<T> : Callback<T> {
